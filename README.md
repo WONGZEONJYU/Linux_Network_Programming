@@ -1,2 +1,9 @@
 # Linux_Network_Programming
- Linux_Network_Programming
+本笔记为Linux网络编程的笔记，整理自狄泰软件唐佐林老师课程。课程持续更新中......
+
+在此特别感谢狄泰软件唐佐林老师与其团队的成员。
+
+笔记如有存在错误，欢迎指出错误！
+
+[[狄泰软件官方网站]](http://www.dt4sw.com/)
+
