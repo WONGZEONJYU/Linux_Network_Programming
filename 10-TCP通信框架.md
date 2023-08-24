@@ -125,7 +125,26 @@
 
 [[]]()
 
+><img src="./assets/image-20230824143529443.png" alt="image-20230824143529443" />
 >
->
->
+><img src="./assets/image-20230824144842724.png" alt="image-20230824144842724" />
 
+### 2.7.1 服务端单元测试
+
+><img src="./assets/image-20230824152609630.png" alt="image-20230824152609630" />
+>
+><img src="./assets/image-20230824152941434.png" alt="image-20230824152941434" />
+>
+>```tex
+>客户端代码在12.tcp_client_frame,编译过程请看客户端设计章节
+>tips:
+>编译过程:在13.tcp_server_frame
+>mkdir build -> cd build -> cmake .. -> make
+>生产可执行文件tcp_server_fram
+>```
+
+### 2.7.2 通信框架集成测试
+
+>
+>
+>
