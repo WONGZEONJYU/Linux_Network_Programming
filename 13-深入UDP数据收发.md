@@ -25,3 +25,170 @@
 >- 图示 : 
 >
 > <img src="./assets/image-20230909114237375.png" alt="image-20230909114237375" />
+
+# 3.预备工作
+
+## 3.1 socket 属性设置 (option)
+
+>- socket 的本质是对本机网络资源的一种标识
+>- socket 本身有各种属性 (不同的连接 , 属性可能不同)
+>- 通过 setsockopt(...) / getsockopt(...) 可存取指定 socket 的属性值
+>- socket 属性的改变可造成 socket 数据收发行为的改变
+
+## 3.2 TCP编程中涉及的用法
+
+><img src="./assets/image-20230910150608238.png" alt="image-20230910150608238" />
+
+## 3.3 `setsockopt(...)` /  `getsockopt(...)` 属性存取函数
+
+><img src="./assets/image-20230910150933920.png" alt="image-20230910150933920" />
+
+## 3.4 UDP广播
+
+><img src="./assets/image-20230910151336001.png" alt="image-20230910151336001" />
+>
+><img src="./assets/image-20230910151517585.png" alt="image-20230910151517585" />
+
+## 3.5 广播实验
+
+[[参考链接]](https://github.com/WONGZEONJYU/STU_LINUX_NETWORK/tree/main/16.udp_Data_Broadcast)
+
+>1. receiver
+>
+>```c++
+>#include <sys/types.h>
+>#include <sys/socket.h>
+>#include <netinet/in.h>
+>#include <arpa/inet.h>
+>#include <cstdio>
+>#include <unistd.h>
+>#include <cstring>
+>#include <iostream>
+>
+>using namespace std;
+>
+>int main(int argc, char *argv[])
+>{
+>    int sock{socket(PF_INET,SOCK_DGRAM,0)};
+>
+>    if (-1 == sock){
+>        cout << "socket error\n";
+>        return -1;
+>    }
+>
+>    cout << "create socket success :" << sock << '\n';
+>
+>    sockaddr_in local {};
+>    local.sin_family = AF_INET;
+>    local.sin_addr.s_addr = htonl(INADDR_ANY);
+>    local.sin_port = htons(9000);
+>
+>    if ( -1 == bind( sock,reinterpret_cast<const sockaddr *>(&local),sizeof(local) ) ){
+>        cout << "udp bind error" << '\n';
+>        return -1;
+>    }
+>
+>    sockaddr_in remote {};
+>    remote.sin_family = AF_INET;
+>    remote.sin_addr.s_addr = inet_addr("127.0.0.1");
+>    remote.sin_port = htons(8888);
+>
+>    for(;;) {
+>
+>        char input[32]{},buf[128]{};
+>
+>        socklen_t len {sizeof(remote)};
+>
+>        const auto r {recvfrom(sock,buf,sizeof(buf),0,reinterpret_cast<sockaddr * >(&remote),&len)};
+>
+>        if (r > 0){
+>
+>            buf[r] = 0;
+>            cout << "Receive :" << buf << '\n';
+>
+>        }else{
+>            break;
+>        }
+>    }
+>
+>    close(sock);
+>
+>    return 0;
+>}
+>
+>```
+>
+>2. sender
+>
+>```c++
+>#include <sys/types.h>
+>#include <sys/socket.h>
+>#include <netinet/in.h>
+>#include <arpa/inet.h>
+>#include <cstdio>
+>#include <unistd.h>
+>#include <cstring>
+>#include <iostream>
+>
+>using namespace std;
+>
+>int main(int argc, char *argv[])
+>{
+>    int server {socket(PF_INET,SOCK_DGRAM,0)};
+>
+>    if (-1 == server){
+>        cout << "server socket error\n";
+>        return -1;
+>    }
+>
+>    sockaddr_in saddr {};
+>    saddr.sin_family = AF_INET;
+>    saddr.sin_addr.s_addr = htonl(INADDR_ANY);//htonl函数把小端转换成大端（网络字节序采用大端）
+>    saddr.sin_port = htons(8888);
+>
+>    if ( -1 == bind( server,reinterpret_cast<const sockaddr *>(&saddr),sizeof(saddr) ) ){
+>        cout << "udp server bind error\n";
+>        return -1;
+>    }
+>
+>    cout << "udp server start success\n";
+>
+>    sockaddr_in remote {};
+>
+>    remote.sin_family = AF_INET;
+>    remote.sin_addr.s_addr = inet_addr("10.211.55.255");  //直接广播，需知道当前网络标识
+>    //remote.sin_addr.s_addr = 0xffffffff;                    //本地广播，不经过路由器
+>    remote.sin_port = htons(9000);
+>    socklen_t len {sizeof(remote)};
+>
+>    int brd {1};
+>    setsockopt(server,SOL_SOCKET,SO_BROADCAST,&brd,sizeof(brd));//socket广播设置
+>
+>    char buf[32]{"hello_world"};
+>    const auto r { strlen(buf)} ;
+>    buf[r] = 0;
+>
+>    for(;;){
+>        sendto(server,buf,r,0,reinterpret_cast<const sockaddr * >(&remote),len);
+>        sleep(1);
+>    }
+>
+>    close(server);
+>    return 0;
+>}
+>
+>```
+
+### 3.5.1 直接广播
+
+><img src="./assets/image-20230910164758284.png" alt="image-20230910164758284" />
+
+### 3.5.2 本地广播
+
+>只列出修改部份代码:
+>
+><img src="./assets/image-20230910165900990.png" alt="image-20230910165900990" />
+>
+><img src="./assets/image-20230910170550454.png" alt="image-20230910170550454" />
+
+❓思考 : UDP 是否还有其它一对多的数据发送方式?
