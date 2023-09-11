@@ -291,7 +291,8 @@
 >    cout << "tx start success\n";
 >
 >    socklen_t len{};
->#if 0
+>
+>#if 1
 >
 >    {
 >        int ttl{};
@@ -299,7 +300,7 @@
 >        getsockopt(server,IPPROTO_IP,IP_MULTICAST_TTL,&ttl,&len);
 >        cout << "default ttl = " << ttl << '\n';
 >
->        //设在TTL的值，路由器转发的次数
+>        //设置TTL的值，路由器转发的次数
 >        ttl = 32;
 >        len  = sizeof(ttl);
 >        setsockopt(server,IPPROTO_IP,IP_MULTICAST_TTL,&ttl,len);
@@ -311,24 +312,27 @@
 >        len = sizeof(loop);
 >        getsockopt(server,IPPROTO_IP,IP_MULTICAST_LOOP,&loop,&len);
 >        cout << "default loop = " << loop << '\n';
->
->        // loop = 0;
->        // len = sizeof(loop);
->        // setsockopt(server,IPPROTO_IP,IP_MULTICAST_LOOP,&loop,len);
->        // cout << "current loop = " << loop << '\n';
+>#if 0
+>        /*把loop设置为0,本地不接收回环数据*/
+>        loop = 0;
+>        len = sizeof(loop);
+>        setsockopt(server,IPPROTO_IP,IP_MULTICAST_LOOP,&loop,len);
+>        cout << "current loop = " << loop << '\n';
+>#endif
 >    }
 >
 >    {    
 >        in_addr addr;
->        // len = sizeof(addr);
->        // getsockopt(server,IPPROTO_IP,IP_MULTICAST_IF,&addr,&len);
->        // cout << "ip = " << inet_ntoa(addr) << '\n';
->
->        addr.s_addr = inet_addr("192.168.199.128");//采用那个网卡作为多播的发送网卡
+>#if 1
+>        len = sizeof(addr);
+>        getsockopt(server,IPPROTO_IP,IP_MULTICAST_IF,&addr,&len);
+>        cout << "get ip = " << inet_ntoa(addr) << '\n';
+>#endif
+>        addr.s_addr = inet_addr("10.10.10.126");//采用那个网卡作为多播的发送网卡
 >        //addr.s_addr = htonl(INADDR_ANY);//多个网卡不建议采用0.0.0.0这个地址，有可能出现接收端无法收到数据的情况
 >        len = sizeof(addr);
 >        setsockopt(server,IPPROTO_IP,IP_MULTICAST_IF,&addr,len);
->        cout << "ip = " << inet_ntoa(addr) << '\n';
+>        cout << "set ip = " << inet_ntoa(addr) << '\n';
 >    }
 >
 >#endif
