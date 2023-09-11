@@ -444,7 +444,13 @@
 >
 ><img src="./assets/image-20230911133956484.png" alt="image-20230911133956484" />
 >
+>2. 设置TTL 和 选择组播的网卡
 >
+><img src="./assets/image-20230911134910845.png" alt="image-20230911134910845" />
+>
+><img src="./assets/image-20230911135022008.png" alt="image-20230911135022008" />
+>
+><img src="./assets/image-20230911135326585.png" alt="image-20230911135326585" />
 
 # 3. 小结
 
