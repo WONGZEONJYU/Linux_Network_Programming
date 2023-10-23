@@ -4,55 +4,53 @@
 
 ## 1.1 socket 接口已普遍存在于现代操作系统中
 
->- Windows下的 `socket(...)` 编程接口与 Linux 中几乎相同
->- 不同之处
->   - 返回值类型不同 (**$\color{red}{句柄类型}$**)
->   - **句柄** 不是文件描述符 , **Windows中并不是一切皆文件**
->
+* Windows下的 `socket(...)` 编程接口与 Linux 中几乎相同
+* 不同之处
+	* 返回值类型不同 (**$\color{red}{句柄类型}$**)
+	* **句柄** 不是文件描述符 , **Windows中并不是一切皆文件**
 
 ## 1.2 Windows下 `socket(...)` 的用法
 
-><img src="./assets/image-20230814115143781.png" alt="image-20230814115143781" />
+<img src="./assets/image-20230814115143781.png" alt="image-20230814115143781" /> 
 
 ## 1.3 Windows网络编程接口
 
-><img src="./assets/image-20230814115224092.png" alt="image-20230814115224092" />
->
-><img src="./assets/image-20230814135113764.png" alt="image-20230814135113764" />
+<img src="./assets/image-20230814115224092.png" alt="image-20230814115224092" /> 
+
+<img src="./assets/image-20230814135113764.png" alt="image-20230814135113764" /> 
 
 ## 1.4 几点微细差异
 
->- 通过 `WSAStartup(...)` 初始化系统环境 (最先调用)
->- `socket(...)` , `accept(...)` 错误返回 `INVALID_SOCKET` (不可默认为-1)
->- `bind(...)` , `listen(...)` 错误返回 `SOCKET_ERROR` (不可默认为-1)
->- `connect(...)` , `send(...)` , `recv(...)` 错误返回 `SOCKET_ERROR` (不可默认为-1)
->- 通过 `WSACleanup()` 清除系统环境 (最后调用) 
+* 通过 `WSAStartup(...)` 初始化系统环境 (最先调用)
+* `socket(...)` , `accept(...)` 错误返回 `INVALID_SOCKET` (不可默认为-1)
+* `bind(...)` , `listen(...)` 错误返回 `SOCKET_ERROR` (不可默认为-1)
+* `connect(...)` , `send(...)` , `recv(...)` 错误返回 `SOCKET_ERROR` (不可默认为-1)
+* 通过 `WSACleanup()` 清除系统环境 (最后调用) 
 
 ## 1.5 Windows 网络编程的特殊说明
 
->- 在工程属性设置链接 `ws2_32.lib`
->- 定义变量 `WSADATA wd` ;
->- 选择 socket 版本并初始化 `WSAStartup (MAKEWORD(2,2) , &wd)` ;
->- Windows版本存在多个 socket 版本
->   - `MAKEWORD(1 , 2)`  //主版本为1 , 副版本为2 , 返回 0x0201
->   - `MAKEWORD(2 , 2)`  //主版本为2 , 副版本为2 , 返回 0x0202
->
+* 在工程属性设置链接 `ws2_32.lib`
+* 定义变量 `WSADATA wd` ;
+* 选择 socket 版本并初始化 `WSAStartup (MAKEWORD(2,2) , &wd)` ;
+* Windows版本存在多个 socket 版本
+	* `MAKEWORD(1 , 2)`  //主版本为1 , 副版本为2 , 返回 0x0201
+	* `MAKEWORD(2 , 2)`  //主版本为2 , 副版本为2 , 返回 0x0202
 
 ## 1.6 Windows 客户端编程示例
 
-><img src="./assets/image-20230814140118304.png" alt="image-20230814140118304" />
+<img src="./assets/image-20230814140118304.png" alt="image-20230814140118304" /> 
 
 ## 1.7 Windows 服务端编程示例
 
-><img src="./assets/image-20230814140250421.png" alt="image-20230814140250421" />
+<img src="./assets/image-20230814140250421.png" alt="image-20230814140250421" /> 
 
 ## 1.8 编程实验
 
->[[参考链接]](https://github.com/WONGZEONJYU/STU_LINUX_NETWORK/tree/main/8.WinSock)
->
+[[参考链接]](https://github.com/WONGZEONJYU/STU_LINUX_NETWORK/tree/main/8.WinSock)
+
 >服务端与客户端都需要加入ws2_32.lib
->
-><img src="./assets/image-20230814140417685.png" alt="image-20230814140417685" />
+
+<img src="./assets/image-20230814140417685.png" alt="image-20230814140417685" /> 
 
 ### 1.8.1 客户端
 
@@ -214,42 +212,39 @@
 
 ### 1.8.3 实验结果
 
-><img src="./assets/image-20230814141612992.png" alt="image-20230814141612992" />
->
-><img src="./assets/image-20230814142250001.png" alt="image-20230814142250001" />
+<img src="./assets/image-20230814141612992.png" alt="image-20230814141612992" /> 
 
-❓问题 : select(...) 是Linux系统特有的吗?
+<img src="./assets/image-20230814142250001.png" alt="image-20230814142250001" /> 
+
+>❓问题 : select(...) 是Linux系统特有的吗?
 
 # 2.Windows下的 `select(...)`
 
 ## 2.1 Windows 中的 `select(...)`
 
->Windows 中同样提供 `select(...)` 函数 , 且参数与Linux的版本完全相同
->
->注意 : Windows 中的 `select(...)` 函数 , **$\color{red}{第一个参数没有任何意义(仅为了兼容)}$** 
->
-><img src="./assets/image-20230814143135167.png" alt="image-20230814143135167" />
+* Windows 中同样提供 `select(...)` 函数 , 且参数与Linux的版本完全相同
+	* 注意 : Windows 中的 `select(...)` 函数 , **$\color{red}{第一个参数没有任何意义(仅为了兼容)}$** 
+
+<img src="./assets/image-20230814143135167.png" alt="image-20230814143135167" /> 
 
 ## 2.2 一个细微的差异
 
->Windows 中的 `select(...)` 专门为套接字而设计
->
->- `fd_count` 用于记录感兴趣的 socket 数量
->
->- `fd_array` 用于记录感兴趣的 socket 句柄数量
->
-><img src="./assets/image-20230814145043477.png" alt="image-20230814145043477" />
+* Windows 中的 `select(...)` 专门为套接字而设计
+	* `fd_count` 用于记录感兴趣的 socket 数量
+	* `fd_array` 用于记录感兴趣的 socket 句柄数量
+
+<img src="./assets/image-20230814145043477.png" alt="image-20230814145043477" /> 
 
 ## 2.3 Windows 中 select(...) 函数使用示例
 
->Windows官方推荐的使用方法
->
-><img src="./assets/image-20230814155502959.png" alt="image-20230814155502959" />
+> * Windows官方推荐的使用方法
+
+<img src="./assets/image-20230814155502959.png" alt="image-20230814155502959" /> 
 
 ## 2.4 编程实验
 
->[[参考链接]](https://github.com/WONGZEONJYU/STU_LINUX_NETWORK/tree/main/9.Win_Select/Win_Select_Server)
->
+[[参考链接]](https://github.com/WONGZEONJYU/STU_LINUX_NETWORK/tree/main/9.Win_Select/Win_Select_Server)
+
 >```c++
 >#include <iostream>
 >#include <WinSock2.h>
@@ -373,7 +368,7 @@
 >    return 0;
 >}
 >```
->
-><img src="./assets/image-20230814160233707.png" alt="image-20230814160233707" />
 
-❓思考 : 如何编写可以跨平台编译运行的网络程序?
+<img src="./assets/image-20230814160233707.png" alt="image-20230814160233707" /> 
+
+>❓思考 : 如何编写可以跨平台编译运行的网络程序?
